@@ -1,5 +1,0 @@
-graph: { title: "C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\cortex_m\src\fpu\cortex_m-fpu.adb"
-node: { title: "cortex_m__fpu__status_control_registerIP" label: "Status_Control_Registerip\nC:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\cortex_m\src\fpu\cortex_m-fpu.ads:63:9\n16 bytes (static)" }
-node: { title: "cortex_m__fpu__sqrt" label: "Sqrt\nC:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\cortex_m\src\fpu\cortex_m-fpu.adb:43:4\n24 bytes (static)" }
-node: { title: "cortex_m__fpu__fpscr" label: "Fpscr\nC:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\cortex_m\src\fpu\cortex_m-fpu.adb:57:4\n24 bytes (static)" }
-}
