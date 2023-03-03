@@ -4,4 +4,4 @@
 # Ada Library Information
 *.ali
 #object folder
-/obj/*
+ada_library_v2/boards/MicroBit/obj/
