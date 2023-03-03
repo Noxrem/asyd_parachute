@@ -5,3 +5,4 @@
 *.ali
 #object folder
 /ada_library_v2/boards/MicroBit/obj/
+obj/
