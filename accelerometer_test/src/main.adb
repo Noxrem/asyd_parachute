@@ -10,14 +10,22 @@ with MicroBit.Console;
 with MicroBit.IOs;
 with MicroBit.Time;
 
+with Cortex_M.FPU;
+
 use MicroBit;
 use MicroBit.IOs;
+use Cortex_M.FPU;
 
 
 procedure Main is
 
    Data : LSM303.All_Axes_Data;
    Value : MicroBit.IOs.Analog_Value;
+
+   function get_S_Factor (data : LSM303.All_Axes_Data) return Float is
+   begin
+      return Sqrt(Float(data.X) ** 2 + Float(data.Y) ** 2 + Float(data.Z) ** 2);
+   end get_S_Factor;
 
 begin
 
@@ -31,7 +39,9 @@ begin
       --  Print the data on the serial port
       Console.Put_Line ("X:" & Data.X'Img & ASCII.HT &
                         "Y:" & Data.Y'Img & ASCII.HT &
-                        "Z:" & Data.Z'Img);
+                          "Z:" & Data.Z'Img);
+      -- Print the S-Factor of the accelerator data
+      Console.Put_Line ("S-Factor:" & To_Integer(get_S_Factor(Data))'Image);
 
       --  Clear the LED matrix
       Display.Clear;
