@@ -11,6 +11,7 @@ with MicroBit.IOs;
 with MicroBit.Time;
 
 with Cortex_M.FPU;
+with Ada.Text_IO;
 
 use MicroBit;
 use MicroBit.IOs;
@@ -21,6 +22,9 @@ procedure Main is
 
    Data : LSM303.All_Axes_Data;
    Value : MicroBit.IOs.Analog_Value;
+   sFactor : Float;
+   str_sFactor : String(1..10);
+
 
    function get_S_Factor (data : LSM303.All_Axes_Data) return Float is
    begin
@@ -40,8 +44,14 @@ begin
       Console.Put_Line ("X:" & Data.X'Img & ASCII.HT &
                         "Y:" & Data.Y'Img & ASCII.HT &
                           "Z:" & Data.Z'Img);
-      -- Print the S-Factor of the accelerator data
-      Console.Put_Line ("S-Factor:" & Integer'Image(Integer(get_S_Factor(Data))));
+      -- Print the S-Factor of the accelerator data (convert Float to Integer
+      -- then into a printable string)
+      --sFactor := get_S_Factor(Data);
+      sFactor := 3.4;
+      str_sFactor := Float'Image(sFactor);
+      Console.Put_Line ("S-Factor:" & str_sFactor);
+      --Console.Put_Line ("S-Factor:" & Float'Image(sFactor));
+      --Console.Put (Float'Image(sFactor));
 
       --  Clear the LED matrix
       Display.Clear;
