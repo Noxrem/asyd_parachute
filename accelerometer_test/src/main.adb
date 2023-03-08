@@ -41,7 +41,7 @@ begin
                         "Y:" & Data.Y'Img & ASCII.HT &
                           "Z:" & Data.Z'Img);
       -- Print the S-Factor of the accelerator data
-      Console.Put_Line ("S-Factor:" & To_Integer(get_S_Factor(Data))'Image);
+      Console.Put_Line ("S-Factor:" & Integer'Image(Integer(get_S_Factor(Data))));
 
       --  Clear the LED matrix
       Display.Clear;
