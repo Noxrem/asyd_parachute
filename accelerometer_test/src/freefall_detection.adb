@@ -1,10 +1,5 @@
 package body freefall_detection is
 
-   --  --  function get_S_Factor (data : LSM303.All_Axes_Data) return Float is
-   --  --  begin
-   --  --  return Sqrt(Float(data.X) ** 2 + Float(data.Y) ** 2 + Float(data.Z) ** 2);
-   --  -- end get_S_Factor;
-
    function get_S_Factor_Sqrd (data : LSM303.All_Axes_Data) return S_Factor_Sqrd_t is
       S_factor : Integer;
       S_factor_type : S_Factor_Sqrd_t;
