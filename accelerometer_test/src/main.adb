@@ -22,6 +22,8 @@ procedure Main is
    Data : LSM303.All_Axes_Data;
    --Value : MicroBit.IOs.Analog_Value;
    sFactor_Sqrd : S_Factor_Sqrd_t;
+   iFallCounter : Integer := 0;
+   iFallCounterThresh : constant Integer := 3;
 
 begin
 
@@ -33,13 +35,19 @@ begin
       Data := Accelerometer.Data;
 
       --  Print the data on the serial port
-      Console.Put_Line ("X:" & Data.X'Img & ASCII.HT &
-                        "Y:" & Data.Y'Img & ASCII.HT &
-                          "Z:" & Data.Z'Img);
+      --  Console.Put_Line ("X:" & Data.X'Img & ASCII.HT &
+      --                    "Y:" & Data.Y'Img & ASCII.HT &
+      --                      "Z:" & Data.Z'Img);
       -- Print the S-Factor of the accelerator data (convert Float to String)
       sFactor_Sqrd := get_S_Factor_Sqrd(Data);
-      Console.Put_Line ("S-Factor squared:" & sFactor_Sqrd'Img);
-
+      if sFactor_Sqrd <= 3000 then -- before 6000
+         if iFallCounter >= iFallCounterThresh then
+            Console.Put_Line ("S-Factor squared:" & sFactor_Sqrd'Img);
+            iFallCounter := 0; -- Reset
+         else
+            iFallCounter := iFallCounter + 1; -- Increment counter
+         end if;
+      end if;
       --  Clear the LED matrix
       Display.Clear;
 
