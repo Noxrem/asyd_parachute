@@ -1,4 +1,4 @@
-with LSM303; use LSM303;
+with LSM303;
 
 package freefall_detection is
 
