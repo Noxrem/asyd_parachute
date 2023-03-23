@@ -66,7 +66,14 @@ begin
       -- Displays a 'F' if freefall is detected and a 'O' if not
       if bFreefallDetected then
          Display.Display('F');
-         Play(Pin => tonePin, N => nFreefallTone); -- Play tone when in freefall
+         begin
+            Play(tonePin, nFreefallTone); -- Play tone when in freefall
+         exception
+            when Constraint_Error =>
+               Console.Put_Line("Constraint Error: Tone");
+            when Program_Error =>
+               Console.Put_Line("Programm Error: Tone");
+         end;
       else
          Display.Display('O');
       end if;
