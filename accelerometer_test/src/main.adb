@@ -9,15 +9,17 @@ with MicroBit.Accelerometer;
 with MicroBit.Console;
 with MicroBit.IOs;
 with MicroBit.Time;
-with MicroBit.Music;
+with MicroBit.Buttons;
+--with MicroBit.Music;
 
 with freefall_detection;
 
 use MicroBit;
+use MicroBit.Buttons;
 --use MicroBit.IOs;
 use freefall_detection;
-use MicroBit.Music;
-use MicroBit.IOs;
+--use MicroBit.Music;
+--use MicroBit.IOs;
 
 
 procedure Main is
@@ -26,14 +28,17 @@ procedure Main is
    --Value : MicroBit.IOs.Analog_Value;
    sFactor_Sqrd : S_Factor_Sqrd_t;
    iFallCounter : Integer := 0;
-   iFallCounterThresh : constant Integer := 3;
+   iFallCounterThresh : constant Integer := 2; -- 3 before
    bFreefallDetected : Boolean := False;   -- Becomes true when a freefall
                                            -- got detected
-   tonePin : constant Pin_Id := 0;                  -- Pin for the speaker
-   toneDuration : constant Time.Time_Ms := 200;    -- Duration of a tone
-   nFreefallTone : constant Note := (P => A4,              -- Tone played on freefall
-                            Ms => toneDuration);
+   --tonePin : constant Pin_Id := 0;                  -- Pin for the speaker
+   --toneDuration : constant Time.Time_Ms := 200;    -- Duration of a tone
+   --nFreefallTone : constant Note := (P => A4,              -- Tone played on freefall
+   --                         Ms => toneDuration);
+   bMotorRunning : Boolean := False; -- If the motor is running
 
+   bButtonA : Boolean := False; -- Current button state
+   bButtonAPrev : Boolean := False; -- Previous button state for debouncing
 begin
 
    Console.Put_Line ("Accelerator Test");
@@ -63,17 +68,35 @@ begin
       --  Clear the LED matrix
       Display.Clear;
 
+      if State(Button_A) = Pressed then -- Set the current state of the button
+         bButtonA := True;
+      else
+         bButtonA := False;
+      end if;
+
+      if bButtonA and bButtonAPrev = False then -- Detect pos. edge, turn on/off motor
+         bMotorRunning := not bMotorRunning;
+      end if;
+
+      bButtonAPrev := bButtonA; -- Set the previous button state to current
+
+
+      if bMotorRunning then
+         --  Turn on the GPIO P8
+         MicroBit.IOs.Set(8, True);
+         MicroBit.IOs.Set(9, True);
+         MicroBit.IOs.Set(15, True);
+         MicroBit.IOs.Set(16, True);
+      else
+         MicroBit.IOs.Set(8, False);
+         MicroBit.IOs.Set(9, False);
+         MicroBit.IOs.Set(15, False);
+         MicroBit.IOs.Set(16, False);
+      end if;
+
       -- Displays a 'F' if freefall is detected and a 'O' if not
       if bFreefallDetected then
          Display.Display('F');
-         begin
-            Play(tonePin, nFreefallTone); -- Play tone when in freefall
-         exception
-            when Constraint_Error =>
-               Console.Put_Line("Constraint Error: Tone");
-            when Program_Error =>
-               Console.Put_Line("Programm Error: Tone");
-         end;
       else
          Display.Display('O');
       end if;
