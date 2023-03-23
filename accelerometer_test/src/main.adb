@@ -36,6 +36,8 @@ procedure Main is
    --nFreefallTone : constant Note := (P => A4,              -- Tone played on freefall
    --                         Ms => toneDuration);
    bMotorRunning : Boolean := False; -- If the motor is running
+   iMotorCounter : Integer := 0; -- Counter gets incremented as long the motor is running
+   iMotorCounterLim : constant Integer := 8; -- Time duration which the motor runs (x50 ms)
 
    bButtonA : Boolean := False; -- Current button state
    bButtonAPrev : Boolean := False; -- Previous button state for debouncing
@@ -80,14 +82,18 @@ begin
 
       bButtonAPrev := bButtonA; -- Set the previous button state to current
 
-
-      if bMotorRunning then
-         --  Turn on the GPIO P8
+      -- Let the motor run for the bMotorCounterLim amount of time
+      if bMotorRunning and iMotorCounter < iMotorCounterLim then
+         iMotorCounter := iMotorCounter + 1; -- Increment the motor counter
+         --  Turn on the GPIO P8, P9, P15, P16
          MicroBit.IOs.Set(8, True);
          MicroBit.IOs.Set(9, True);
          MicroBit.IOs.Set(15, True);
          MicroBit.IOs.Set(16, True);
-      else
+         Display.Display('F'); -- Show 'F' on display
+      else -- Turn off the motor
+         bMotorRunning := False;
+         iMotorCounter := 0; -- Reset counter
          MicroBit.IOs.Set(8, False);
          MicroBit.IOs.Set(9, False);
          MicroBit.IOs.Set(15, False);
@@ -96,9 +102,7 @@ begin
 
       -- Displays a 'F' if freefall is detected and a 'O' if not
       if bFreefallDetected then
-         Display.Display('F');
-      else
-         Display.Display('O');
+         bMotorRunning := True;
       end if;
       --  -- Check, whether we are free floating or not (to be refined ...)
       --  if -100 < Data.X and Data.X < 100 then
