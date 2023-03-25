@@ -27,20 +27,25 @@ procedure Main is
    Data : LSM303.All_Axes_Data;
    --Value : MicroBit.IOs.Analog_Value;
    sFactor_Sqrd : S_Factor_Sqrd_t;
+   sFactorFallThresh : constant S_Factor_Sqrd_t := 3000; -- Threshold under which a freefall is considered
    iFallCounter : Integer := 0;
-   iFallCounterThresh : constant Integer := 2; -- 3 before
+   iFallCounterThresh : constant Integer := 3; -- 3 before
    bFreefallDetected : Boolean := False;   -- Becomes true when a freefall
                                            -- got detected
    --tonePin : constant Pin_Id := 0;                  -- Pin for the speaker
    --toneDuration : constant Time.Time_Ms := 200;    -- Duration of a tone
    --nFreefallTone : constant Note := (P => A4,              -- Tone played on freefall
    --                         Ms => toneDuration);
-   bMotorRunning : Boolean := False; -- If the motor is running
+   bMotorLStrand : Boolean := False; -- Left MOSFET strand for the motor
+   bMotorRStrand : Boolean := False; -- Right MOSFET strand for the motor
    iMotorCounter : Integer := 0; -- Counter gets incremented as long the motor is running
-   iMotorCounterLim : constant Integer := 8; -- Time duration which the motor runs (x50 ms)
+   iMotorCounterLim : constant Integer := 6; -- Time duration which the motor runs (x50 ms)
 
    bButtonA : Boolean := False; -- Current button state
    bButtonAPrev : Boolean := False; -- Previous button state for debouncing
+
+   bButtonB : Boolean := False;
+   bButtonBPrev : Boolean := False;
 begin
 
    Console.Put_Line ("Accelerator Test");
@@ -58,7 +63,7 @@ begin
       --                      "Z:" & Data.Z'Img);
       -- Print the S-Factor of the accelerator data (convert Float to String)
       sFactor_Sqrd := get_S_Factor_Sqrd(Data);
-      if sFactor_Sqrd <= 3000 then -- before 6000
+      if sFactor_Sqrd <= sFactorFallThresh then
          if iFallCounter >= iFallCounterThresh then
             Console.Put_Line ("S-Factor squared:" & sFactor_Sqrd'Img);
             bFreefallDetected := True;
@@ -76,33 +81,56 @@ begin
          bButtonA := False;
       end if;
 
-      if bButtonA and bButtonAPrev = False then -- Detect pos. edge, turn on/off motor
-         bMotorRunning := not bMotorRunning;
+      if State(Button_B) = Pressed then
+         bButtonB := True;
+      else
+         bButtonB := False;
       end if;
 
-      bButtonAPrev := bButtonA; -- Set the previous button state to current
+      if bButtonA and bButtonAPrev = False then -- Detect pos. edge, turn on/off left motor strand
+         bMotorLStrand := not bMotorLStrand;
+      end if;
+
+      if bButtonB and bButtonBPrev = False then -- Detect pos. edge, turn on/off right motor strand
+         bMotorRStrand := not bMotorRStrand;
+      end if;
+
+      -- Set the previous button state to current
+      bButtonAPrev := bButtonA;
+      bButtonBPrev := bButtonB;
 
       -- Let the motor run for the bMotorCounterLim amount of time
-      if bMotorRunning and iMotorCounter < iMotorCounterLim then
+      if (bMotorLStrand or bMotorRStrand) -- If one motor strand is on
+        and iMotorCounter < iMotorCounterLim then -- And counter is still running
          iMotorCounter := iMotorCounter + 1; -- Increment the motor counter
-         --  Turn on the GPIO P8, P9, P15, P16
-         MicroBit.IOs.Set(8, True);
-         MicroBit.IOs.Set(9, True);
-         MicroBit.IOs.Set(15, True);
-         MicroBit.IOs.Set(16, True);
+
+         if bMotorLStrand then
+            -- Turn on the GPIO P8 and P15 (left strand)
+            MicroBit.IOs.Set(8, True);
+            MicroBit.IOs.Set(15, True);
+         end if;
+
+         if bMotorRStrand then
+            --  Turn on the GPIO P9 and P16 (right strand)
+            MicroBit.IOs.Set(13, True);
+            MicroBit.IOs.Set(16, True);
+         end if;
          Display.Display('F'); -- Show 'F' on display
       else -- Turn off the motor
-         bMotorRunning := False;
+         bMotorLStrand := False;
+         bMotorRStrand := False;
          iMotorCounter := 0; -- Reset counter
          MicroBit.IOs.Set(8, False);
-         MicroBit.IOs.Set(9, False);
+         MicroBit.IOs.Set(13, False);
          MicroBit.IOs.Set(15, False);
          MicroBit.IOs.Set(16, False);
       end if;
 
-      -- Displays a 'F' if freefall is detected and a 'O' if not
+      -- Displays a 'F' if freefall is detected
       if bFreefallDetected then
-         bMotorRunning := True;
+         -- For now lets both strand run
+         bMotorLStrand := True;
+         bMotorRStrand := True;
       end if;
       --  -- Check, whether we are free floating or not (to be refined ...)
       --  if -100 < Data.X and Data.X < 100 then

@@ -1,6 +1,87 @@
 <?xml version="1.0"?>
 <Locations >
-  <Project >
+  <Project>
+    <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\jumper.gpr</vfs_file>
+    <file_marker column=" 1" line=" 14" >
+      <vfs_project />
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\accelerometer_test\src\main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 54" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-ios.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 137" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-time.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 63" line=" 8" >
+      <vfs_project />
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\accelerometer_test\src\freefall_detection.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 47" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-music.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 50" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-music.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 147" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-ios.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 89" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-timers.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 164" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-gpio-tasks_and_events.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 61" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf52\nrf-ppi.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 122" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-events.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 64" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-tasks.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 172" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-gpio.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 682" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\microbit\src\microbit-display.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 110" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\boards\MicroBit\microbit_zfp.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\arch\ARM\Nordic\drivers\nrf_common\nrf-interrupts.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project />
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\accelerometer_test\src\freefall_detection.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 14" >
+      <vfs_project />
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\accelerometer_test\src\main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project />
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\accelerometer_test\src\main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\jumper.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\src\main.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 60" >
+      <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\jumper.gpr</vfs_project>
+      <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\src\main.adb</vfs_file>
+    </file_marker>
     <file_marker current="true" column=" 1" line=" 1" >
       <vfs_project>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\jumper.gpr</vfs_project>
       <vfs_file>C:\Users\Noxrem\Documents\GitHub\asyd_parachute\ada_library_v2\examples\MicroBit\jumper\src\main.adb</vfs_file>
