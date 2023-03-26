@@ -16,7 +16,7 @@ with freefall_detection;
 
 use MicroBit;
 use MicroBit.Buttons;
---use MicroBit.IOs;
+use MicroBit.IOs;
 use freefall_detection;
 --use MicroBit.Music;
 --use MicroBit.IOs;
@@ -46,6 +46,10 @@ procedure Main is
 
    bButtonB : Boolean := False;
    bButtonBPrev : Boolean := False;
+
+   aValueLStrand : Analog_Value := 0; -- Value of the pin P2 (middle left strand)
+   aValueRStrand : Analog_Value := 0; -- Value of the pin P1 (middle left strand)
+   aValueMotor : Analog_Value := 0; -- Value of the pin P0 (M- on motor)
 begin
 
    Console.Put_Line ("Accelerator Test");
@@ -139,9 +143,12 @@ begin
       --     Display.Display ('X');
       --  end if;
       --
-      --  -- Read analogue pin (could be 0,1,2,3,4, or 10)
-      --  Value := MicroBit.IOs.Analog (2);
-      --  Console.Put_Line ("Value : " & Value'Image);
+      -- Read analogue pin 0, 1 and 2
+      aValueLStrand := MicroBit.IOs.Analog(2);
+      aValueRStrand := MicroBit.IOs.Analog(1);
+      aValueMotor := MicroBit.IOs.Analog(0);
+      Console.Put_Line ("Value L Str : " & aValueLStrand'Image & " R Str : "
+                        & aValueRStrand'Image & " Mot : " & aValueMotor'Image);
       --
       --  -- Set output
       --  if Value > Analog_Value(200) then
