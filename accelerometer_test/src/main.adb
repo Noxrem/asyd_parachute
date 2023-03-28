@@ -47,9 +47,17 @@ procedure Main is
    bButtonB : Boolean := False;
    bButtonBPrev : Boolean := False;
 
+   pFetLT : constant Pin_Id := 8; -- MOSFET left top
+   pFetRT : constant Pin_Id := 13; -- MOSFET right top
+   pFetLB : constant Pin_Id := 15; -- MOSFET left bottom
+   pFetRB : constant Pin_Id := 16; -- MOSFET right bottom
    aValueLStrand : Analog_Value := 0; -- Value of the pin P2 (middle left strand)
    aValueRStrand : Analog_Value := 0; -- Value of the pin P1 (middle left strand)
    aValueMotor : Analog_Value := 0; -- Value of the pin P0 (M- on motor)
+   bValueFetLT : Boolean;
+   bValueFetRT : Boolean;
+   bValueFetLB : Boolean;
+   bValueFetRB : Boolean;
 begin
 
    Console.Put_Line ("Accelerator Test");
@@ -110,24 +118,25 @@ begin
 
          if bMotorLStrand then
             -- Turn on the GPIO P8 and P15 (left strand)
-            MicroBit.IOs.Set(8, True);
-            MicroBit.IOs.Set(15, True);
+            MicroBit.IOs.Set(pFetLT, True);
+            MicroBit.IOs.Set(pFetLB, True);
          end if;
 
          if bMotorRStrand then
             --  Turn on the GPIO P9 and P16 (right strand)
-            MicroBit.IOs.Set(13, True);
-            MicroBit.IOs.Set(16, True);
+            MicroBit.IOs.Set(pFetRT, True);
+            MicroBit.IOs.Set(pFetRB, True);
          end if;
          Display.Display('F'); -- Show 'F' on display
       else -- Turn off the motor
          bMotorLStrand := False;
          bMotorRStrand := False;
          iMotorCounter := 0; -- Reset counter
-         MicroBit.IOs.Set(8, False);
-         MicroBit.IOs.Set(13, False);
-         MicroBit.IOs.Set(15, False);
-         MicroBit.IOs.Set(16, False);
+         -- Turn off all MOSFETS
+         MicroBit.IOs.Set(pFetLT, False);
+         MicroBit.IOs.Set(pFetRT, False);
+         MicroBit.IOs.Set(pFetLB, False);
+         MicroBit.IOs.Set(pFetRB, False);
       end if;
 
       -- Displays a 'F' if freefall is detected
@@ -147,8 +156,18 @@ begin
       aValueLStrand := MicroBit.IOs.Analog(2);
       aValueRStrand := MicroBit.IOs.Analog(1);
       aValueMotor := MicroBit.IOs.Analog(0);
-      Console.Put_Line ("Value L Str : " & aValueLStrand'Image & " R Str : "
-                        & aValueRStrand'Image & " Mot : " & aValueMotor'Image);
+      -- Read digital MOSFET pins
+      bValueFetLT := MicroBit.IOs.Set(pFetLT);
+      bValueFetRT := MicroBit.IOs.Set(pFetRT);
+      bValueFetLB := MicroBit.IOs.Set(pFetLB);
+      bValueFetRB := MicroBit.IOs.Set(pFetRB);
+      Console.Put_Line ("Value Mot : " & aValueMotor'Image &
+                          " R Str : " & aValueRStrand'Image &
+                          " L Str : " & aValueLStrand'Image &
+                          " FetRT : " & bValueFetRT'Image &
+                          " FetRB : " & bValueFetRB'Image &
+                          " FetLT : " & bValueFetLT'Image &
+                          " FetLB : " & bValueFetLB'Image);
       --
       --  -- Set output
       --  if Value > Analog_Value(200) then
