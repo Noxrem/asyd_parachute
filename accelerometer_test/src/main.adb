@@ -13,13 +13,14 @@ with MicroBit.Buttons;
 --with MicroBit.Music;
 
 with freefall_detection;
-with fault_detection;
+--with fault_detection;
+with motor;
 
 use MicroBit;
 use MicroBit.Buttons;
 use MicroBit.IOs;
 use freefall_detection;
-use fault_detection;
+--use fault_detection;
 --use MicroBit.Music;
 --use MicroBit.IOs;
 
@@ -34,14 +35,6 @@ procedure Main is
    iFallCounterThresh : constant Integer := 3; -- 3 before
    bFreefallDetected : Boolean := False;   -- Becomes true when a freefall
                                            -- got detected
-   --tonePin : constant Pin_Id := 0;                  -- Pin for the speaker
-   --toneDuration : constant Time.Time_Ms := 200;    -- Duration of a tone
-   --nFreefallTone : constant Note := (P => A4,              -- Tone played on freefall
-   --                         Ms => toneDuration);
-   bMotorLStrand : Boolean := False; -- Left MOSFET strand for the motor
-   bMotorRStrand : Boolean := False; -- Right MOSFET strand for the motor
-   iMotorCounter : Integer := 0; -- Counter gets incremented as long the motor is running
-   iMotorCounterLim : constant Integer := 6; -- Time duration which the motor runs (x50 ms)
 
    bButtonA : Boolean := False; -- Current button state
    bButtonAPrev : Boolean := False; -- Previous button state for debouncing
@@ -49,10 +42,15 @@ procedure Main is
    bButtonB : Boolean := False;
    bButtonBPrev : Boolean := False;
 
+   bMotorLStrand : Boolean := False; -- Left MOSFET strand for the motor
+   bMotorRStrand : Boolean := False; -- Right MOSFET strand for the motor
+
+      -- MOSFET pins
    pFetLT : constant Pin_Id := 8; -- MOSFET left top
    pFetRT : constant Pin_Id := 13; -- MOSFET right top
    pFetLB : constant Pin_Id := 15; -- MOSFET left bottom
    pFetRB : constant Pin_Id := 16; -- MOSFET right bottom
+
    aValueLStrand : Analog_Value := 0; -- Value of the pin P2 (middle left strand)
    aValueRStrand : Analog_Value := 0; -- Value of the pin P1 (middle left strand)
    aValueMotor : Analog_Value := 0; -- Value of the pin P0 (M- on motor)
@@ -115,35 +113,37 @@ begin
       bButtonAPrev := bButtonA;
       bButtonBPrev := bButtonB;
 
-      -- Let the motor run for the bMotorCounterLim amount of time
-      if (bMotorLStrand or bMotorRStrand) -- If one motor strand is on
-        and iMotorCounter < iMotorCounterLim then -- And counter is still running
-         iMotorCounter := iMotorCounter + 1; -- Increment the motor counter
-
-         if bMotorLStrand then
-            -- Turn on the GPIO P8 and P15 (left strand)
-            MicroBit.IOs.Set(pFetLT, True);
-            MicroBit.IOs.Set(pFetLB, True);
-            Display_Left_Fault; -- Display left fault
-         end if;
-
-         if bMotorRStrand then
-            --  Turn on the GPIO P9 and P16 (right strand)
-            MicroBit.IOs.Set(pFetRT, True);
-            MicroBit.IOs.Set(pFetRB, True);
-            Display_Right_Fault; -- Display right fault
-         end if;
-         Display.Display('F'); -- Show 'F' on display
-      else -- Turn off the motor
-         bMotorLStrand := False;
-         bMotorRStrand := False;
-         iMotorCounter := 0; -- Reset counter
-         -- Turn off all MOSFETS
-         MicroBit.IOs.Set(pFetLT, False);
-         MicroBit.IOs.Set(pFetRT, False);
-         MicroBit.IOs.Set(pFetLB, False);
-         MicroBit.IOs.Set(pFetRB, False);
-      end if;
+      -- Run both, left or right motor strand and writes the value back into the variable
+      motor.Run(bMotorLStrand, bMotorRStrand);
+      --  -- Let the motor run for the bMotorCounterLim amount of time
+      --  if (bMotorLStrand or bMotorRStrand) -- If one motor strand is on
+      --    and iMotorCounter < iMotorCounterLim then -- And counter is still running
+      --     iMotorCounter := iMotorCounter + 1; -- Increment the motor counter
+      --
+      --     if bMotorLStrand then
+      --        -- Turn on the GPIO P8 and P15 (left strand)
+      --        MicroBit.IOs.Set(pFetLT, True);
+      --        MicroBit.IOs.Set(pFetLB, True);
+      --        Display_Left_Fault; -- Display left fault
+      --     end if;
+      --
+      --     if bMotorRStrand then
+      --        --  Turn on the GPIO P9 and P16 (right strand)
+      --        MicroBit.IOs.Set(pFetRT, True);
+      --        MicroBit.IOs.Set(pFetRB, True);
+      --        Display_Right_Fault; -- Display right fault
+      --     end if;
+      --     Display.Display('F'); -- Show 'F' on display
+      --  else -- Turn off the motor
+      --     bMotorLStrand := False;
+      --     bMotorRStrand := False;
+      --     iMotorCounter := 0; -- Reset counter
+      --     -- Turn off all MOSFETS
+      --     MicroBit.IOs.Set(pFetLT, False);
+      --     MicroBit.IOs.Set(pFetRT, False);
+      --     MicroBit.IOs.Set(pFetLB, False);
+      --     MicroBit.IOs.Set(pFetRB, False);
+      --  end if;
 
       -- Displays a 'F' if freefall is detected
       if bFreefallDetected then
