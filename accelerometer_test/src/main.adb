@@ -13,11 +13,13 @@ with MicroBit.Buttons;
 --with MicroBit.Music;
 
 with freefall_detection;
+with fault_detection;
 
 use MicroBit;
 use MicroBit.Buttons;
 use MicroBit.IOs;
 use freefall_detection;
+use fault_detection;
 --use MicroBit.Music;
 --use MicroBit.IOs;
 
@@ -87,6 +89,7 @@ begin
       --  Clear the LED matrix
       Display.Clear;
 
+      -- Button Handling
       if State(Button_A) = Pressed then -- Set the current state of the button
          bButtonA := True;
       else
@@ -99,11 +102,12 @@ begin
          bButtonB := False;
       end if;
 
-      if bButtonA and bButtonAPrev = False then -- Detect pos. edge, turn on/off left motor strand
+      -- Detect pos. edge, turn on/off left motor strand
+      if bButtonA and bButtonAPrev = False then
          bMotorLStrand := not bMotorLStrand;
       end if;
-
-      if bButtonB and bButtonBPrev = False then -- Detect pos. edge, turn on/off right motor strand
+      -- Detect pos. edge, turn on/off right motor strand
+      if bButtonB and bButtonBPrev = False then
          bMotorRStrand := not bMotorRStrand;
       end if;
 
@@ -120,12 +124,14 @@ begin
             -- Turn on the GPIO P8 and P15 (left strand)
             MicroBit.IOs.Set(pFetLT, True);
             MicroBit.IOs.Set(pFetLB, True);
+            Display_Left_Fault; -- Display left fault
          end if;
 
          if bMotorRStrand then
             --  Turn on the GPIO P9 and P16 (right strand)
             MicroBit.IOs.Set(pFetRT, True);
             MicroBit.IOs.Set(pFetRB, True);
+            Display_Right_Fault; -- Display right fault
          end if;
          Display.Display('F'); -- Show 'F' on display
       else -- Turn off the motor
@@ -145,12 +151,6 @@ begin
          bMotorLStrand := True;
          bMotorRStrand := True;
       end if;
-      --  -- Check, whether we are free floating or not (to be refined ...)
-      --  if -100 < Data.X and Data.X < 100 then
-      --     Display.Display ('0');
-      --  else
-      --     Display.Display ('X');
-      --  end if;
       --
       -- Read analogue pin 0, 1 and 2
       aValueLStrand := MicroBit.IOs.Analog(2);
@@ -168,14 +168,8 @@ begin
                           " FetRB : " & bValueFetRB'Image &
                           " FetLT : " & bValueFetLT'Image &
                           " FetLB : " & bValueFetLB'Image);
-      --
-      --  -- Set output
-      --  if Value > Analog_Value(200) then
-      --     MicroBit.IOs.Set (12, True);
-      --  else
-      --     MicroBit.IOs.Set (12, False);
-      --  end if;
 
+      --
       Time.Sleep (50);
    end loop;
 end Main;
