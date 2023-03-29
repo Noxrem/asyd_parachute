@@ -10,20 +10,17 @@ with MicroBit.Console;
 with MicroBit.IOs;
 with MicroBit.Time;
 with MicroBit.Buttons;
---with MicroBit.Music;
 
 with freefall_detection;
---with fault_detection;
+with fault_detection;
 with motor;
 
 use MicroBit;
 use MicroBit.Buttons;
 use MicroBit.IOs;
 use freefall_detection;
---use fault_detection;
---use MicroBit.Music;
---use MicroBit.IOs;
-
+use motor;
+use fault_detection;
 
 procedure Main is
 
@@ -32,7 +29,7 @@ procedure Main is
    sFactor_Sqrd : S_Factor_Sqrd_t;
    sFactorFallThresh : constant S_Factor_Sqrd_t := 3000; -- Threshold under which a freefall is considered
    iFallCounter : Integer := 0;
-   iFallCounterThresh : constant Integer := 3; -- 3 before
+   iFallCounterThresh : constant Integer := 4; -- 3 before
    bFreefallDetected : Boolean := False;   -- Becomes true when a freefall
                                            -- got detected
 
@@ -45,19 +42,19 @@ procedure Main is
    bMotorLStrand : Boolean := False; -- Left MOSFET strand for the motor
    bMotorRStrand : Boolean := False; -- Right MOSFET strand for the motor
 
-      -- MOSFET pins
-   pFetLT : constant Pin_Id := 8; -- MOSFET left top
-   pFetRT : constant Pin_Id := 13; -- MOSFET right top
-   pFetLB : constant Pin_Id := 15; -- MOSFET left bottom
-   pFetRB : constant Pin_Id := 16; -- MOSFET right bottom
+   --     -- MOSFET pins
+   --  pFetLT : constant Pin_Id := 8; -- MOSFET left top
+   --  pFetRT : constant Pin_Id := 13; -- MOSFET right top
+   --  pFetLB : constant Pin_Id := 15; -- MOSFET left bottom
+   --  pFetRB : constant Pin_Id := 16; -- MOSFET right bottom
 
    aValueLStrand : Analog_Value := 0; -- Value of the pin P2 (middle left strand)
    aValueRStrand : Analog_Value := 0; -- Value of the pin P1 (middle left strand)
    aValueMotor : Analog_Value := 0; -- Value of the pin P0 (M- on motor)
    bValueFetLT : Boolean;
    bValueFetRT : Boolean;
-   bValueFetLB : Boolean;
-   bValueFetRB : Boolean;
+
+   measValues : Measurement_Values_t; -- Input for the FSM (measurements)
 begin
 
    Console.Put_Line ("Accelerator Test");
@@ -79,6 +76,7 @@ begin
          if iFallCounter >= iFallCounterThresh then
             Console.Put_Line ("S-Factor squared:" & sFactor_Sqrd'Img);
             bFreefallDetected := True;
+            Display_Freefall; -- Show that freefall got detected
             iFallCounter := 0; -- Reset
          else
             iFallCounter := iFallCounter + 1; -- Increment counter
@@ -112,45 +110,12 @@ begin
       -- Set the previous button state to current
       bButtonAPrev := bButtonA;
       bButtonBPrev := bButtonB;
-
-      -- Run both, left or right motor strand and writes the value back into the variable
-      motor.Run(bMotorLStrand, bMotorRStrand);
-      --  -- Let the motor run for the bMotorCounterLim amount of time
-      --  if (bMotorLStrand or bMotorRStrand) -- If one motor strand is on
-      --    and iMotorCounter < iMotorCounterLim then -- And counter is still running
-      --     iMotorCounter := iMotorCounter + 1; -- Increment the motor counter
-      --
-      --     if bMotorLStrand then
-      --        -- Turn on the GPIO P8 and P15 (left strand)
-      --        MicroBit.IOs.Set(pFetLT, True);
-      --        MicroBit.IOs.Set(pFetLB, True);
-      --        Display_Left_Fault; -- Display left fault
-      --     end if;
-      --
-      --     if bMotorRStrand then
-      --        --  Turn on the GPIO P9 and P16 (right strand)
-      --        MicroBit.IOs.Set(pFetRT, True);
-      --        MicroBit.IOs.Set(pFetRB, True);
-      --        Display_Right_Fault; -- Display right fault
-      --     end if;
-      --     Display.Display('F'); -- Show 'F' on display
-      --  else -- Turn off the motor
-      --     bMotorLStrand := False;
-      --     bMotorRStrand := False;
-      --     iMotorCounter := 0; -- Reset counter
-      --     -- Turn off all MOSFETS
-      --     MicroBit.IOs.Set(pFetLT, False);
-      --     MicroBit.IOs.Set(pFetRT, False);
-      --     MicroBit.IOs.Set(pFetLB, False);
-      --     MicroBit.IOs.Set(pFetRB, False);
-      --  end if;
-
       -- Displays a 'F' if freefall is detected
-      if bFreefallDetected then
-         -- For now lets both strand run
-         bMotorLStrand := True;
-         bMotorRStrand := True;
-      end if;
+      --  if bFreefallDetected then
+      --     -- For now lets both strand run
+      --     bMotorLStrand := True;
+      --     bMotorRStrand := True;
+      --  end if;
       --
       -- Read analogue pin 0, 1 and 2
       aValueLStrand := MicroBit.IOs.Analog(2);
@@ -159,15 +124,30 @@ begin
       -- Read digital MOSFET pins
       bValueFetLT := MicroBit.IOs.Set(pFetLT);
       bValueFetRT := MicroBit.IOs.Set(pFetRT);
-      bValueFetLB := MicroBit.IOs.Set(pFetLB);
-      bValueFetRB := MicroBit.IOs.Set(pFetRB);
+
+      -- Prepare measurements to put into FSM
+      measValues.bFreefallDetect := bFreefallDetected;
+      measValues.aValueMotor := aValueMotor;
+      measValues.aValueRStrand := aValueRStrand;
+      measValues.aValueLStrand := aValueLStrand;
+      measValues.bValueFetRT := bValueFetRT;
+      measValues.bValueFetLT := bValueFetLT;
+
+      -- Run finite state machine to detect the fault and decide which motor
+      -- strand to activate
+      Run_Fault_FSM(measValues, bMotorRStrand, bMotorLStrand);
+
+
+
+      -- Activate the chosen motor strand
+      motor.Run(bMotorRStrand, bMotorLStrand);
+
+      -- Output values to the console
       Console.Put_Line ("Value Mot : " & aValueMotor'Image &
                           " R Str : " & aValueRStrand'Image &
                           " L Str : " & aValueLStrand'Image &
                           " FetRT : " & bValueFetRT'Image &
-                          " FetRB : " & bValueFetRB'Image &
-                          " FetLT : " & bValueFetLT'Image &
-                          " FetLB : " & bValueFetLB'Image);
+                          " FetLT : " & bValueFetLT'Image);
 
       --
       Time.Sleep (50);
